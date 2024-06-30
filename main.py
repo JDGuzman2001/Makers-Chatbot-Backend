@@ -36,6 +36,7 @@ async def get_inventory():
 
 @app.post("/inventory/add")
 async def add_item(brand: str = Form(...), price: int = Form(...), quantity: int = Form(...)):
+    global inventory
     new_item = {
         "brand": brand,
         "price": price,
@@ -44,16 +45,20 @@ async def add_item(brand: str = Form(...), price: int = Form(...), quantity: int
     }
     inventory.append(new_item)
 
-    return {"message": "Item added successfully", "item": new_item}
+    return inventory
+
+    # return {"message": "Item added successfully", "item": new_item}
 
 @app.post("/inventory/update")
 async def update_item(id: str = Form(...), brand: str = Form(...), price: int = Form(...), quantity: int = Form(...)):
+    global inventory
     for item in inventory:
         if item["id"] == id:
             item["brand"] = brand
             item["price"] = price
             item["quantity"] = quantity
-            return {"message": "Item updated successfully", "item": item}
+            return inventory
+            # return {"message": "Item updated successfully", "item": item}
 
 
 
@@ -62,7 +67,9 @@ async def delete_item(id: str = Form(...)):
     global inventory
     inventory = [item for item in inventory if item["id"] != id]
 
-    return {"message": "Item deleted successfully"}
+    return inventory
+
+    # return {"message": "Item deleted successfully"}
 
 
 
