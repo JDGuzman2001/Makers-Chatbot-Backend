@@ -12,3 +12,13 @@ This repository houses the backend for a versatile system that manages both chat
 - **FastAPI:** For creating the API endpoints with high performance.
 - **Python:** The core language for backend logic and data processing.
 - **OpenAIAPI:** For Chatbot.
+
+# Getting Started
+**1. Clone the repository:**
+    git clone https://github.com/your-username/repo-name.git
+**2. Navigate to the project directory:**
+    cd repo-name
+**3. Install dependencies:**
+    pip install -r requirements.txt
+**4. Run the application:**
+    uvicorn main:app --reload --host 127.0.0.1 --port 8000 --env-file dev.env
