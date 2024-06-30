@@ -31,7 +31,6 @@ inventory = json.loads(json_with_uuid)
 @app.get("/inventory")
 async def get_inventory():
     global inventory
-    print(inventory)
     return inventory
 
 
@@ -70,9 +69,7 @@ async def delete_item(id: str = Form(...)):
 @app.post("/chatbot")
 async def get_response(request: Request):
     pregunta = await request.form()
-    print(pregunta)
     pregunta_texto = pregunta.get("pregunta")
-    print(pregunta_texto)
 
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -86,7 +83,6 @@ async def get_response(request: Request):
     )
 
     answer_json = response.choices[0].message.content
-    print(answer_json)
     return answer_json
 
 

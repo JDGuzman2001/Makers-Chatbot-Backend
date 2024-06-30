@@ -1,4 +1,3 @@
-# [{"brand": "Dell", "quantity": 50, "price": 800}, {"brand": "HP", "quantity": 40, "price": 750}, {"brand": "Lenovo", "quantity": 30, "price": 700}]
 import uuid
 import json
 
