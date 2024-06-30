@@ -81,6 +81,7 @@ async def get_response(request: Request):
     #
     # print(answer_dict)
     # return answer_dict
+    return answer_json
     print(answer_json)
 
 
