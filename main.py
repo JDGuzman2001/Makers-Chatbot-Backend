@@ -2,9 +2,12 @@ from openai import OpenAI
 from fastapi import FastAPI, Request, Form
 from fastapi.middleware.cors import CORSMiddleware
 import json
+from inventory import json_with_uuid
+from OpenAIKey import api_key
+import uuid
 
 client = OpenAI(
-    api_key="sk-proj-o7Oba9cOUJYCoJybKBt3T3BlbkFJjdaEwl5WQIH5gNe6FnKK"
+    api_key= api_key
 )
 
 
@@ -20,11 +23,15 @@ app.add_middleware(
 
 
 
-with open("inventory.json", "r") as f:
-    inventory = json.load(f)
+
+
+# Cargar el inventario al inicio
+inventory = json.loads(json_with_uuid)
 
 @app.get("/inventory")
 async def get_inventory():
+    global inventory
+    print(inventory)
     return inventory
 
 
@@ -33,23 +40,28 @@ async def add_item(brand: str = Form(...), price: int = Form(...), quantity: int
     new_item = {
         "brand": brand,
         "price": price,
-        "quantity": quantity
+        "quantity": quantity,
+        "id": str(uuid.uuid4())
     }
     inventory.append(new_item)
 
-    with open("inventory.json", "w") as f:
-        json.dump(inventory, f)
-
     return {"message": "Item added successfully", "item": new_item}
+
+@app.post("/inventory/update")
+async def update_item(id: str = Form(...), brand: str = Form(...), price: int = Form(...), quantity: int = Form(...)):
+    for item in inventory:
+        if item["id"] == id:
+            item["brand"] = brand
+            item["price"] = price
+            item["quantity"] = quantity
+            return {"message": "Item updated successfully", "item": item}
+
 
 
 @app.delete("/inventory/delete")
-async def delete_item(brand: str = Form(...)):
+async def delete_item(id: str = Form(...)):
     global inventory
-    inventory = [item for item in inventory if item["brand"] != brand]
-
-    with open("inventory.json", "w") as f:
-        json.dump(inventory, f)
+    inventory = [item for item in inventory if item["id"] != id]
 
     return {"message": "Item deleted successfully"}
 
@@ -63,26 +75,20 @@ async def get_response(request: Request):
     print(pregunta_texto)
 
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",  # Or any other suitable model
+        model="gpt-3.5-turbo",
         messages=[
-            # {"role": "system", "content": f"You are a helpful assistant. Provide the response in JSON format with the key: 'data', no line breaks, do not continue with the response. Use the inventary delimited by triple quotes. Inventory:```{inventory}```"},
             {"role": "system",
              "content": f"You are a useful assistant. Provide the answer in string format, structure your response so that it seems like a natural conversation., without line breaks, do not continue with the answer. Use the inventory delimited by triple quotes Inventory:```{inventory}`` `"},
             {"role": "user", "content": pregunta_texto}
         ],
         temperature=0,
-        max_tokens=150  # Adjust as needed
+        max_tokens=150
     )
 
-    # answer = response.choices[0].text.strip()  # Get the text content
-    answer_json = response.choices[0].message.content  # Access the JSON content
-    # answer_dict = json.loads(answer_json)  # Convert it to a dictionary
-    # # extracted_answer = answer_dict["data"]  # Extract the "answer" key
-    #
-    # print(answer_dict)
-    # return answer_dict
-    return answer_json
+    answer_json = response.choices[0].message.content
     print(answer_json)
+    return answer_json
+
 
 
 
