@@ -1,13 +1,23 @@
 from openai import OpenAI
 from fastapi import FastAPI, Request, Form
+from fastapi.middleware.cors import CORSMiddleware
 import json
 
 client = OpenAI(
-    api_key="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"
+    api_key="sk-proj-o7Oba9cOUJYCoJybKBt3T3BlbkFJjdaEwl5WQIH5gNe6FnKK"
 )
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite solicitudes desde cualquier origen
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "DELETE"],
+    allow_headers=["*"],
+)
+
 
 
 with open("inventory.json", "r") as f:
@@ -48,6 +58,7 @@ async def delete_item(brand: str = Form(...)):
 @app.post("/chatbot")
 async def get_response(request: Request):
     pregunta = await request.form()
+    print(pregunta)
     pregunta_texto = pregunta.get("pregunta")
     print(pregunta_texto)
 
@@ -56,7 +67,7 @@ async def get_response(request: Request):
         messages=[
             # {"role": "system", "content": f"You are a helpful assistant. Provide the response in JSON format with the key: 'data', no line breaks, do not continue with the response. Use the inventary delimited by triple quotes. Inventory:```{inventory}```"},
             {"role": "system",
-             "content": f"You are a useful assistant. Provide the answer in JSON format with the key: 'data', without line breaks, do not continue with the answer. Be very specific with what they ask you, if they ask about `Brand` you return the brand, if they ask `Price` you return only the price, and if they ask for `Quantity` you return only the quantity. Use the inventory delimited by triple quotes Inventory:```{inventory}`` `"},
+             "content": f"You are a useful assistant. Provide the answer in string format, structure your response so that it seems like a natural conversation., without line breaks, do not continue with the answer. Use the inventory delimited by triple quotes Inventory:```{inventory}`` `"},
             {"role": "user", "content": pregunta_texto}
         ],
         temperature=0,
@@ -65,11 +76,14 @@ async def get_response(request: Request):
 
     # answer = response.choices[0].text.strip()  # Get the text content
     answer_json = response.choices[0].message.content  # Access the JSON content
-    answer_dict = json.loads(answer_json)  # Convert it to a dictionary
-    # extracted_answer = answer_dict["data"]  # Extract the "answer" key
+    # answer_dict = json.loads(answer_json)  # Convert it to a dictionary
+    # # extracted_answer = answer_dict["data"]  # Extract the "answer" key
+    #
+    # print(answer_dict)
+    # return answer_dict
+    print(answer_json)
 
-    print(answer_dict)
-    return answer_dict
+
 
 
 
