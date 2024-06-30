@@ -14,11 +14,11 @@ This repository houses the backend for a versatile system that manages both chat
 - **OpenAIAPI:** For Chatbot.
 
 # Getting Started
-**1. Clone the repository:**
-    git clone https://github.com/your-username/repo-name.git
-**2. Navigate to the project directory:**
-    cd repo-name
-**3. Install dependencies:**
-    pip install -r requirements.txt
-**4. Run the application:**
-    uvicorn main:app --reload --host 127.0.0.1 --port 8000 --env-file dev.env
+1. Clone the repository:
+   - git clone https://github.com/JDGuzman2001/Makers-Chatbot-Backend.git
+3. Navigate to the project directory:
+   - cd Makers-Chatbot-Backend
+4. Install dependencies:
+   - pip install -r requirements.txt
+5. Run the application:
+   - uvicorn main:app --reload --host 127.0.0.1 --port 8000 --env-file dev.env
